@@ -1,0 +1,78 @@
+function smallestCommons(arr) {
+  function isPrime(x) {
+    for (let i = 2; i < x; i++) {
+      if (x % i === 0) return false;
+    }
+    return x !== 1 && x !== 0;
+  }
+  function primeD(num) {
+      let arr = [2];
+    while((arr[arr.length-1]+1) <= num){
+        arr.push(arr[arr.length-1]+1);
+    }
+    var filtered =  arr.filter(x => isPrime(x));
+    filtered = filtered.filter(x => num%x == 0);
+      return filtered;
+    }
+  function primeF(num){
+    let d = primeD(num)[primeD(num).length-1];
+    if(num == d){
+      return d;
+    }else{
+      let arr=[d];
+      let result = primeF(num/d); 
+      let ans = arr.concat(result);
+      return ans;
+    }
+  }
+  function origin(arr){
+    let array =[];
+    for(let x of arr){
+      if(Array.isArray(x)){
+        let a = [...new Set(x)];
+        array.push(...a);
+      }else{
+        array.push(x);
+      }
+    }
+    array = array.sort(function(a, b){return a-b});
+    let ans = [... new Set(array)];
+    return ans;
+  }
+  function nRep(num, arr){
+    let a = 0;
+    arr = arr.map(x => (x==num)? a=1: a=0);
+    let ans = arr.reduce(function(a, b){return a+b;});
+    return ans;
+  }
+  function mostRep(num, arr){
+    let array = [];
+    for(let x of arr){
+      let a = nRep(num, x);
+      array.push(a);
+    }
+    let ans = array.sort(function(a, b){return b-a})[0];
+    return ans;
+  }
+  
+  arr = arr.sort(function(a, b){return a-b});
+  let nums =[arr[0]];
+  while(nums[nums.length-1] < arr[arr.length - 1]){
+    nums.push(nums[nums.length-1]+1);
+  }
+  nums = nums.filter(x=> x!=1);
+  let org = origin(nums.map( x=> primeF(x)))
+  let facArr= nums.map( x=> primeF(x)).filter(x => Array.isArray(x));
+  let multiply = org.map( x => {
+    let y = mostRep(x, facArr);
+      if(y == 0|| y== 1){
+        x *= 1
+      }else{
+        x = Math.pow(x, y);
+      }
+      return x;
+  })
+  let ans = multiply.reduce(function(a, b){return a*b;});
+  console.log(ans)
+  return ans;
+}
